@@ -1,0 +1,2 @@
+/var/lib/oar/.batch_job_bashrc: line 5: /home/bolivier/.bashrc: No such file or directory
+## OAR [2018-08-03 18:00:52] Job 1304423 KILLED ##

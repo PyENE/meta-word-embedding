@@ -1,0 +1,52 @@
+____________________________________________________
+Questions-Words categorygram5-plural
+Accuracy: 0.1486
+Time: 0s
+____________________________________________________
+Questions-Words categorycapital-common-countries
+Accuracy: 0.0000
+Time: 12224s
+____________________________________________________
+Questions-Words categorycity-in-state
+Accuracy: 0.0003
+Time: 19362s
+____________________________________________________
+Questions-Words categoryfamily
+Accuracy: 0.0088
+Time: 39664s
+____________________________________________________
+Questions-Words categorygram8-plural-verbs
+Accuracy: 0.0115
+Time: 39943s
+____________________________________________________
+Questions-Words categorygram2-opposite
+Accuracy: 0.0053
+Time: 40684s
+____________________________________________________
+Questions-Words categorycurrency
+Accuracy: 0.0148
+Time: 41330s
+____________________________________________________
+Questions-Words categorygram3-present-participle
+Accuracy: 0.1566
+Time: 42011s
+____________________________________________________
+Questions-Words categorygram6-nationality-adjective
+Accuracy: 0.0128
+Time: 43115s
+____________________________________________________
+Questions-Words categorygram7-past-tense
+Accuracy: 0.0071
+Time: 44679s
+____________________________________________________
+Questions-Words categoryantonyms-adjectives
+Accuracy: 0.0000
+Time: 46397s
+____________________________________________________
+Questions-Words categorycapital-world
+Accuracy: 0.0007
+Time: 47068s
+____________________________________________________
+Questions-Words categorygram1-adjective-to-adverb
+Accuracy: 0.0119
+Time: 78210s
