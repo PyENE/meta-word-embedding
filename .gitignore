@@ -1,4 +1,9 @@
 .idea
-models
+build
+dist
+meta_word_embedding.egg-info
+fastText-0.1.0
 embeddings
-word-embeddings-benchmarks
+results
+queries
+*.pyc
