@@ -275,5 +275,3 @@ if __name__ == "__main__":
         run_benchmark(questions_words, preset_results, embeddings1, id2word1,
                       word2id1, options.output_path, options.method,
                       options.top)
-
-
