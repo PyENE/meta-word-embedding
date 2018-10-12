@@ -33,8 +33,11 @@ class WordEmbedding():
         self.id2word = {v: k for k, v in word2id.items()}
         self.embeddings = np.vstack(vectors)
 
+    def get_vocabulary(self):
+        return list(self.word2id.keys())
+
     def is_word_in_vocabulary(self, word):
-        return word in self.word2id.keys()
+        return word in self.get_vocabulary()
 
     def get_word_embedding(self, word):
         assert self.is_word_in_vocabulary(word), 'word not in dict'
@@ -58,7 +61,7 @@ class WordEmbedding():
         k_best = scores.argsort()[-k:][::-1]
         return [self.id2word[idx] for _, idx in enumerate(k_best)], scores[k_best]
 
-    def get_embeddings_for_oov(self, oov_words):
+    def get_embeddings_for_oov_words(self, oov_words):
         _, oov_queries_path = tempfile.mkstemp()
         _, oov_embeddings_path = tempfile.mkstemp()
         with io.open(oov_queries_path, 'w', encoding='utf-8') as f:
@@ -68,14 +71,18 @@ class WordEmbedding():
                         self.model_path + '<' + oov_queries_path +
                         '>' + oov_embeddings_path, shell=True)
         vectors = []
+        valid_oov_words = []
         with io.open(oov_embeddings_path, 'r', encoding='utf-8') as f:
             for line in f:
                 fields = line.strip().split(" ")
+                word = fields[0]
                 vec = [float(v) for v in fields[1:]]
-                vectors.append(vec)
-        return np.vstack(vectors)
+                if (len(vec) == self.embeddings.shape[1]) and (np.linalg.norm(vec) != 0):
+                    valid_oov_words.append(word)
+                    vectors.append(vec)
+        return (valid_oov_words, np.vstack(vectors))
 
-    def add_words_to_embeddings(self, words, embeddings):
+    def add_words(self, words, embeddings):
         for word in words:
             self.word2id[word] = len(self.word2id) - 1
             self.id2word[len(self.word2id) - 1] = word

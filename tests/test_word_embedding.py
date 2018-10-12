@@ -11,6 +11,11 @@ def word_embedding_init():
     return WordEmbedding('../embeddings/wiki.fr.bin', '../embeddings/wiki.fr.vec', nmax=10000)
 
 
+@pytest.fixture(scope="module")
+def oov_embeddings_init(word_embedding_init):
+    return word_embedding_init.get_embeddings_for_oov_words(['femm'])
+
+
 def test_get_nn_given_word(word_embedding_init):
     nn = word_embedding_init.get_nn_given_word('appeler', k=3)
     assert len(nn) == 2
@@ -30,7 +35,15 @@ def test_get_nn_given_embedding(word_embedding_init):
     assert len(nn[1]) == 2
     assert nn[0][1] == 'reine'
 
-def test_get_embeddings_for_oov(word_embedding_init):
-    femm_embedding = word_embedding_init.get_embeddings_for_oov(['femm'])
-    assert femm_embedding.shape[1] == 300
+def test_get_embeddings_for_oov_words(oov_embeddings_init):
+    assert oov_embeddings_init[1].shape[1] == 300
+
+def test_add_words(word_embedding_init, oov_embeddings_init):
+    init_embeddings_shape = word_embedding_init.embeddings.shape
+    oov_embeddings_shape = oov_embeddings_init[1].shape
+    word_embedding_init.add_words(oov_embeddings_init[0], oov_embeddings_init[1])
+    complete_embeddings_shape = word_embedding_init.embeddings.shape
+    assert len(np.setdiff1d(oov_embeddings_init[0], word_embedding_init.get_vocabulary())) == 0
+    assert complete_embeddings_shape[0] == init_embeddings_shape[0] + oov_embeddings_shape[0]
+
 
