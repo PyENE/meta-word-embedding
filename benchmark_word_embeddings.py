@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
 """
 Examples of use:
 $ python benchmark-word-embeddings.py -a models/wiki.fr.bin -c embeddings/wiki.fr.vec -q benchmarks/questions-words-fr.txt -o results/wiki-benchmark.txt -m exception -v 100000
 $ python benchmark-word-embeddings.py -a models/wiki.fr.bin -b models/cc.fr.300.bin -c embeddings/wiki.fr.vec -d cc.fr.300.vec -q benchmarks/questions-words-fr.txt -o results/aggregated-benchmark.txt -m top -t 1 -v 100000
 """
+__author__ = 'Brice Olivier'
 
-from __future__ import print_function
+
 import io
 import numpy as np
 from optparse import OptionParser
@@ -273,3 +275,5 @@ if __name__ == "__main__":
         run_benchmark(questions_words, preset_results, embeddings1, id2word1,
                       word2id1, options.output_path, options.method,
                       options.top)
+
+
