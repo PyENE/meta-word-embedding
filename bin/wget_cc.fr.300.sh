@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+mkdir -p embeddings
 cd embeddings
 
 wget https://s3-us-west-1.amazonaws.com/fasttext-vectors/word-vectors-v2/cc.fr.300.bin.gz
