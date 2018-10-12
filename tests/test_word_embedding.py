@@ -12,8 +12,8 @@ def word_embedding_init():
 
 
 @pytest.fixture(scope="module")
-def oov_embeddings_init(word_embedding_init):
-    return word_embedding_init.get_embeddings_for_oov_words(['femm'])
+def oov_vectors_init(word_embedding_init):
+    return word_embedding_init.get_vectors_for_oov_words(['femm'])
 
 
 def test_get_nn_given_word(word_embedding_init):
@@ -21,29 +21,29 @@ def test_get_nn_given_word(word_embedding_init):
     assert len(nn) == 2
     assert len(nn[0]) == 3
     assert len(nn[1]) == 3
-    assert np.array_equal(nn[0], ['appeler', 'appelle', 'nommer', 'rappeler', 'entendre'])
-    assert np.array_equal(nn[1], [1., 0.61844597, 0.61445533, 0.61172119, 0.58956483])
+    assert np.array_equal(nn[0], ['appeler', 'appelle', 'nommer'])
+    np.testing.assert_array_almost_equal(nn[1], np.array([1., 0.61844597, 0.61445533]))
 
 
 def test_get_nn_given_embedding(word_embedding_init):
-    roi_embedding = word_embedding_init.get_word_embedding('roi')
-    homme_embedding = word_embedding_init.get_word_embedding('homme')
-    femme_embedding = word_embedding_init.get_word_embedding('femme')
-    nn = word_embedding_init.get_nn_given_embedding(roi_embedding - homme_embedding + femme_embedding, k=2)
+    roi_vector = word_embedding_init.get_word_vector('roi')
+    homme_vector = word_embedding_init.get_word_vector('homme')
+    femme_vector = word_embedding_init.get_word_vector('femme')
+    nn = word_embedding_init.get_nn_given_vector(roi_vector - homme_vector + femme_vector, k=2)
     assert len(nn) == 2
     assert len(nn[0]) == 2
     assert len(nn[1]) == 2
     assert nn[0][1] == 'reine'
 
-def test_get_embeddings_for_oov_words(oov_embeddings_init):
-    assert oov_embeddings_init[1].shape[1] == 300
+def test_get_vectors_for_oov_words(oov_vectors_init):
+    assert oov_vectors_init[1].shape[1] == 300
 
-def test_add_words(word_embedding_init, oov_embeddings_init):
-    init_embeddings_shape = word_embedding_init.embeddings.shape
-    oov_embeddings_shape = oov_embeddings_init[1].shape
-    word_embedding_init.add_words(oov_embeddings_init[0], oov_embeddings_init[1])
-    complete_embeddings_shape = word_embedding_init.embeddings.shape
-    assert len(np.setdiff1d(oov_embeddings_init[0], word_embedding_init.get_vocabulary())) == 0
-    assert complete_embeddings_shape[0] == init_embeddings_shape[0] + oov_embeddings_shape[0]
+def test_add_words(word_embedding_init, oov_vectors_init):
+    init_vectors_shape = word_embedding_init.vectors.shape
+    oov_vectors_shape = oov_vectors_init[1].shape
+    word_embedding_init.add_words(oov_vectors_init[0], oov_vectors_init[1])
+    complete_vectors_shape = word_embedding_init.vectors.shape
+    assert len(np.setdiff1d(oov_vectors_init[0], word_embedding_init.get_vocabulary())) == 0
+    assert complete_vectors_shape[0] == init_vectors_shape[0] + oov_vectors_shape[0]
 
 

@@ -8,17 +8,17 @@ import tempfile
 
 
 class WordEmbedding():
-    def __init__(self, model_path, embedding_path, nmax=10000):
+    def __init__(self, model_path, embeddings_path, nmax=10000):
         self.model_path = model_path
-        self.embedding_path = embedding_path
-        self._load_vec(embedding_path, nmax)
+        self.embeddings_path = embeddings_path
+        self._load_vec(embeddings_path, nmax)
 
-    def _load_vec(self, embedding_path, nmax):
-        """Load word embeddings file and sets a numpy.matrix with embeddings,
+    def _load_vec(self, embeddings_path, nmax):
+        """Load word vectors file and sets a numpy.matrix with vectors,
         an id2word dictionnary and a word2id dictionnary."""
         vectors = []
         word2id = {}
-        with io.open(embedding_path, 'r', encoding='utf-8',
+        with io.open(embeddings_path, 'r', encoding='utf-8',
                      newline='\n', errors='ignore') as f:
             next(f)
             for i, line in enumerate(f):
@@ -31,7 +31,7 @@ class WordEmbedding():
                     break
         self.word2id = word2id
         self.id2word = {v: k for k, v in word2id.items()}
-        self.embeddings = np.vstack(vectors)
+        self.vectors = np.vstack(vectors)
 
     def get_vocabulary(self):
         return list(self.word2id.keys())
@@ -39,29 +39,29 @@ class WordEmbedding():
     def is_word_in_vocabulary(self, word):
         return word in self.get_vocabulary()
 
-    def get_word_embedding(self, word):
+    def get_word_vector(self, word):
         assert self.is_word_in_vocabulary(word), 'word not in dict'
-        return self.embeddings[self.word2id[word], :]
+        return self.vectors[self.word2id[word], :]
 
-    def get_nn_given_embedding(self, word_embedding, k=1):
-        """take as input a word embedding and find its K nearest neighbors
-        within a numpy.matrix of embeddings and its id2word dictionnary."""
-        scores = (self.embeddings / np.linalg.norm(self.embeddings, 2, 1)[:, None]).dot(
-            word_embedding / np.linalg.norm(word_embedding))
+    def get_nn_given_vector(self, vector, k=1):
+        """take as input a word vector and find its K nearest neighbors
+        within a numpy.matrix of vectors and its id2word dictionnary."""
+        scores = (self.vectors / np.linalg.norm(self.vectors, 2, 1)[:, None]).dot(
+            vector / np.linalg.norm(vector))
         k_best = scores.argsort()[-k:][::-1]
         return [self.id2word[idx] for _, idx in enumerate(k_best)], scores[k_best]
 
     def get_nn_given_word(self, word, k=1):
         """take as input a word and find its K nearest neighbors
-                within a numpy.matrix of embeddings and its id2word dictionnary."""
+                within a numpy.matrix of vectors and its id2word dictionnary."""
         assert self.is_word_in_vocabulary(word), 'word not in dict'
-        word_embedding = self.embeddings[self.word2id[word], :]
-        scores = (self.embeddings / np.linalg.norm(self.embeddings, 2, 1)[:, None]).dot(
-            word_embedding / np.linalg.norm(word_embedding))
+        vector = self.vectors[self.word2id[word], :]
+        scores = (self.vectors / np.linalg.norm(self.vectors, 2, 1)[:, None]).dot(
+            vector / np.linalg.norm(vector))
         k_best = scores.argsort()[-k:][::-1]
         return [self.id2word[idx] for _, idx in enumerate(k_best)], scores[k_best]
 
-    def get_embeddings_for_oov_words(self, oov_words):
+    def get_vectors_for_oov_words(self, oov_words):
         _, oov_queries_path = tempfile.mkstemp()
         _, oov_embeddings_path = tempfile.mkstemp()
         with io.open(oov_queries_path, 'w', encoding='utf-8') as f:
@@ -77,13 +77,13 @@ class WordEmbedding():
                 fields = line.strip().split(" ")
                 word = fields[0]
                 vec = [float(v) for v in fields[1:]]
-                if (len(vec) == self.embeddings.shape[1]) and (np.linalg.norm(vec) != 0):
+                if (len(vec) == self.vectors.shape[1]) and (np.linalg.norm(vec) != 0):
                     valid_oov_words.append(word)
                     vectors.append(vec)
         return (valid_oov_words, np.vstack(vectors))
 
-    def add_words(self, words, embeddings):
+    def add_words(self, words, vectors):
         for word in words:
             self.word2id[word] = len(self.word2id) - 1
             self.id2word[len(self.word2id) - 1] = word
-        self.embeddings = np.row_stack((self.embeddings, embeddings))
+        self.vectors = np.row_stack((self.vectors, vectors))
