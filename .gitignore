@@ -1,6 +1,7 @@
 .idea
 build
 dist
+.pytest_cache
 meta_word_embedding.egg-info
 fastText-0.1.0
 embeddings
