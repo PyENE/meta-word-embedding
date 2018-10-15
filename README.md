@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-git clone https://github.com/brice-olivier/meta-word-embedding.git
+git clone https://github.com/PyENE/meta-word-embedding.git
 cd meta-word-embedding
 sudo python setup.py install --user
 chmod +x ./bin/setup_fasttext.sh
